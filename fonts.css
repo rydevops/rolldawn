@@ -1,0 +1,15 @@
+/* Both fonts are SIL Open Font License 1.1 (Press Start 2P, VT323) — bundled as woff2 in the project root. */
+@font-face {
+  font-family: 'PixelHead';
+  src: url('font-pixel.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PixelBody';
+  src: url('font-body.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

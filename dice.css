@@ -1,0 +1,134 @@
+/* dice.css — real 3D CSS dice. Faces: 1 front · 6 back · 3 right · 4 left · 2 top · 5 bottom. */
+
+.die {
+  --s: 62px;
+  --h: calc(var(--s) / 2);
+  --c1: #ff6b78; --c2: #d62839; --c3: #8f1424; --edge-c: #6a0d1b;
+  width: var(--s);
+  height: var(--s);
+  position: relative;
+  margin: 0 auto;
+  perspective: 520px;
+}
+.die.green { --c1: #7dffb0; --c2: #2fbf71; --c3: #15683d; --edge-c: #0b4527; }
+
+.die .hop { position: absolute; inset: 0; transform-style: preserve-3d; }
+.die .tilt { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(-30deg); }
+.die .cube {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 1.15s cubic-bezier(0.12, 0.72, 0.18, 1);
+}
+.die .face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  padding: 13%;
+  background: radial-gradient(circle at 28% 24%, var(--c1) 0%, var(--c2) 52%, var(--c3) 100%);
+  border: 3px solid var(--edge-c);
+  border-radius: 14%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.die .face i {
+  display: block;
+  width: 78%;
+  height: 78%;
+  margin: auto;
+  background: #fff7e6;
+  border-radius: 50%;
+  box-shadow: inset -2px -3px 0 rgba(0, 0, 0, 0.28);
+}
+.die .f1 { transform: rotateY(0deg) translateZ(var(--h)); }
+.die .f6 { transform: rotateY(180deg) translateZ(var(--h)); }
+.die .f3 { transform: rotateY(90deg) translateZ(var(--h)); }
+.die .f4 { transform: rotateY(-90deg) translateZ(var(--h)); }
+.die .f2 { transform: rotateX(90deg) translateZ(var(--h)); }
+.die .f5 { transform: rotateX(-90deg) translateZ(var(--h)); }
+
+/* pip positions on the 3x3 grid */
+.p0 { grid-area: 1 / 1; } .p1 { grid-area: 1 / 2; } .p2 { grid-area: 1 / 3; }
+.p3 { grid-area: 2 / 1; } .p4 { grid-area: 2 / 2; } .p5 { grid-area: 2 / 3; }
+.p6 { grid-area: 3 / 1; } .p7 { grid-area: 3 / 2; } .p8 { grid-area: 3 / 3; }
+
+/* a soft contact shadow */
+.die::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -12px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* throw arc */
+.die.throwing .hop { animation: dieHop 1.15s cubic-bezier(0.3, 0, 0.7, 1) both; }
+@keyframes dieHop {
+  0% { transform: translateY(-110px) scale(1.18); }
+  42% { transform: translateY(0) scale(1); }
+  58% { transform: translateY(-26px); }
+  72% { transform: translateY(0); }
+  84% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* idle spin (title + boot) */
+.die.spin .cube { transition: none; animation: dieSpin 9s linear infinite; }
+@keyframes dieSpin {
+  from { transform: rotateX(0deg) rotateY(0deg); }
+  to { transform: rotateX(360deg) rotateY(720deg); }
+}
+.die.float .hop { animation: dieFloat 3s ease-in-out infinite; }
+@keyframes dieFloat { 50% { transform: translateY(-9px); } }
+
+/* ---- Dice tray ---- */
+.dice-tray {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%) scale(0.85);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 26px;
+  padding: 14px 18px 12px;
+  width: min(86%, 330px);
+  background: rgba(12, 10, 29, 0.82);
+  box-shadow: 0 0 0 3px var(--edge), 0 10px 0 rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 1.4, 0.4, 1);
+  z-index: 5;
+}
+.dice-tray.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.die-slot { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 96px; }
+.die-label { font-family: var(--head); font-size: 8px; letter-spacing: 1px; }
+.red-t { color: #ff7d88; }
+.green-t { color: #6ee0a0; }
+.die-result {
+  font-family: var(--head);
+  font-size: 10px;
+  min-height: 14px;
+  margin-top: 2px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 0 #000;
+}
+.die-result.miss { color: #aaa3c2; }
+.die-result.hit { color: #ffd37a; }
+.die-result.crit { color: #ffe85a; font-size: 12px; animation: critPulse 0.4s steps(2, jump-none) infinite; }
+.die-result.dim { color: #7d759a; }
+@keyframes critPulse { 50% { transform: scale(1.18); } }
+.dice-calc { width: 100%; text-align: center; font-size: 19px; line-height: 1.15; min-height: 1.2em; color: #ffeec2; }
+.die.dimmed { filter: grayscale(0.85) brightness(0.65); }
+
+@media (max-height: 560px) {
+  .die { --s: 50px; }
+  .dice-tray { flex-wrap: nowrap; width: auto; gap: 24px; }
+  .die-slot { gap: 10px; min-width: 70px; }
+}

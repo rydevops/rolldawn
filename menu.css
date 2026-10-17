@@ -1,0 +1,40 @@
+/* menu.css — the pause menu overlay. */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 4, 14, 0.74);
+  padding: calc(var(--sat) + 12px) 18px calc(var(--sab) + 12px);
+}
+.menu { width: min(100%, 420px); padding: 20px 18px 16px; max-height: 100%; overflow-y: auto; }
+.menu-title {
+  font-family: var(--head);
+  font-size: 14px;
+  color: var(--edge);
+  text-align: center;
+  margin-bottom: 16px;
+}
+.menu-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.stat {
+  background: #2c2450;
+  padding: 8px 6px 7px;
+  text-align: center;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+}
+.stat b { display: block; font-family: var(--head); font-size: 8px; color: var(--edge); margin-bottom: 6px; font-weight: 400; }
+.stat span { font-size: 24px; }
+.stat.wide { grid-column: span 3; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; }
+.stat.wide b { margin: 0; }
+.xp-bar { grid-column: span 3; }
+.menu-btns { display: flex; flex-direction: column; gap: 8px; }
+.menu-btns .btn { width: calc(100% - 8px); }
+.menu-note { text-align: center; font-size: 18px; opacity: 0.7; margin-top: 8px; min-height: 1.2em; }

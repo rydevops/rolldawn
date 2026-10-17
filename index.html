@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dawnroll</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dawnroll">
+  <meta name="theme-color" content="#0c0a1d">
+  <meta name="description" content="Dawnroll — a tiny dice-driven pixel RPG.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="preload" href="font-pixel.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="font-body.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS is split by concern; add a new file + a <link> here when you add a feature. -->
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="screens.css">
+  <link rel="stylesheet" href="hud.css">
+  <link rel="stylesheet" href="battle.css">
+  <link rel="stylesheet" href="dice.css">
+  <link rel="stylesheet" href="menu.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- 0 · BOOT — one touch unlocks audio on iOS, then the story begins -->
+  <section id="screen-boot" class="screen">
+    <div class="boot-inner">
+      <div id="boot-die" class="die red boot-die"></div>
+      <h1 class="boot-title">DAWNROLL</h1>
+      <p id="boot-tap" class="boot-tap">CHECKING FOR UPDATES…</p>
+      <p id="boot-hint" class="boot-hint">sound on · best played on a phone</p>
+    </div>
+  </section>
+
+  <!-- 1 · INTRO CUTSCENE -->
+  <section id="screen-intro" class="screen">
+    <canvas id="intro-canvas"></canvas>
+    <div id="intro-caption" class="caption"></div>
+    <button id="intro-skip" class="btn small skip" type="button">SKIP ▸</button>
+  </section>
+
+  <!-- 2 · TITLE -->
+  <section id="screen-title" class="screen">
+    <canvas id="title-canvas"></canvas>
+    <div class="title-wrap">
+      <div id="title-die" class="die red title-die"></div>
+      <h1 class="logo"><span class="l1">DAWN</span><span class="l2">ROLL</span></h1>
+      <p class="logo-sub">Chronicle of the Verdant Reach</p>
+    </div>
+    <p id="title-tap" class="tap-start blink">TAP TO START</p>
+    <p class="version" id="title-version">prototype</p>
+  </section>
+
+  <!-- 3 · SAVE SLOTS -->
+  <section id="screen-slots" class="screen">
+    <canvas id="slots-canvas"></canvas>
+    <div class="slots-wrap">
+      <h2 class="screen-title">CHOOSE YOUR SAVE</h2>
+      <div id="slot-list"></div>
+      <button id="slots-back" class="btn small" type="button">◂ BACK</button>
+    </div>
+  </section>
+
+  <!-- 4 · FIELD (exploration) -->
+  <section id="screen-field" class="screen">
+    <canvas id="field-canvas"></canvas>
+    <div id="hud">
+      <div class="hud-card panel">
+        <canvas id="hud-face" width="16" height="16"></canvas>
+        <div class="hud-info">
+          <div class="hud-name"><span id="hud-name">WREN</span> <span id="hud-lv">Lv1</span></div>
+          <div class="bar hp"><i id="hud-hp-bar"></i></div>
+          <div class="hud-nums"><span id="hud-hp">34/34</span></div>
+          <div class="bar mp"><i id="hud-mp-bar"></i></div>
+        </div>
+      </div>
+      <button id="btn-menu" class="btn small" type="button">MENU</button>
+    </div>
+    <div id="area-name" class="area-name">VERDANT FIELD</div>
+    <div id="dpad" aria-label="Directional pad">
+      <div class="dp up"></div><div class="dp down"></div><div class="dp left"></div><div class="dp right"></div>
+      <div class="dp-center"></div>
+    </div>
+    <button id="btn-a" class="pad-btn" type="button">A</button>
+  </section>
+
+  <!-- 5 · BATTLE -->
+  <section id="screen-battle" class="screen">
+    <div class="battle-stage" id="battle-stage">
+      <canvas id="battle-canvas"></canvas>
+      <div id="enemy-card" class="combat-card panel">
+        <div class="cc-name"><span id="enemy-name">SLIME</span> <span id="enemy-lv">Lv1</span></div>
+        <div class="bar hp"><i id="enemy-hp-bar"></i></div>
+        <div class="cc-nums" id="enemy-hp">12/12</div>
+      </div>
+      <div id="hero-card" class="combat-card panel">
+        <div class="cc-name"><span id="bhero-name">WREN</span> <span id="bhero-lv">Lv1</span></div>
+        <div class="bar hp"><i id="bhero-hp-bar"></i></div>
+        <div class="cc-nums"><span id="bhero-hp">34/34</span></div>
+        <div class="bar mp"><i id="bhero-mp-bar"></i></div>
+      </div>
+      <div id="fx-layer" class="fx-layer"></div>
+      <div id="dice-tray" class="dice-tray">
+        <div class="die-slot">
+          <div class="die-label red-t">ATTACK</div>
+          <div id="die-red" class="die red"></div>
+          <div id="res-red" class="die-result"></div>
+        </div>
+        <div class="die-slot">
+          <div class="die-label green-t">DAMAGE</div>
+          <div id="die-green" class="die green"></div>
+          <div id="res-green" class="die-result"></div>
+        </div>
+        <div id="dice-calc" class="dice-calc"></div>
+      </div>
+    </div>
+    <div class="battle-panel panel">
+      <p id="battle-msg" class="battle-msg"></p>
+      <div id="battle-cmds" class="battle-cmds"></div>
+    </div>
+  </section>
+
+  <!-- 6 · GAME OVER -->
+  <section id="screen-gameover" class="screen">
+    <div class="go-inner">
+      <h2 class="go-title">YOU FELL</h2>
+      <p class="go-text">The dice were not kind today…</p>
+      <p class="go-text dim">but fate has a short memory.</p>
+      <button id="go-continue" class="btn" type="button">WAKE AT THE CAMPFIRE</button>
+    </div>
+  </section>
+
+  <!-- Overlays -->
+  <div id="overlay-menu" class="overlay hidden">
+    <div class="menu panel">
+      <h2 class="menu-title">PAUSED</h2>
+      <div id="menu-stats" class="menu-stats"></div>
+      <div class="menu-btns">
+        <button class="btn" data-act="resume" type="button">RESUME</button>
+        <button class="btn" data-act="save" type="button">SAVE GAME</button>
+        <button class="btn" data-act="sound" type="button">SOUND: ON</button>
+        <button class="btn red" data-act="quit" type="button">QUIT TO TITLE</button>
+      </div>
+      <p id="menu-note" class="menu-note"></p>
+    </div>
+  </div>
+
+  <div id="dialog" class="dialog hidden">
+    <div class="dialog-box panel">
+      <div class="dialog-name" id="dialog-name"></div>
+      <p class="dialog-text" id="dialog-text"></p>
+      <div class="dialog-choices" id="dialog-choices"></div>
+      <span class="dialog-more" id="dialog-more">▼</span>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <button id="sound-toggle" class="btn small sound-toggle" type="button" aria-label="Toggle sound">🔊</button>
+
+  <div id="fade"></div>
+  <div id="flash"></div>
+  <div id="transition"></div>
+</div>
+
+<noscript><p style="color:#fff;padding:24px">Dawnroll needs JavaScript. Please enable it.</p></noscript>
+<script src="version.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>
